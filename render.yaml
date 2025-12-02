@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: caesartalk-demo
+    env: php
+    plan: free
+    branch: main # O cambia a 'master' si esa es tu rama
+    buildCommand: composer install --no-dev --optimize-autoloader && npm install && npm run build && touch database/database.sqlite && php artisan migrate:fresh --seed --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_DEBUG
+        value: true
+      - key: APP_ENV
+        value: production
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: DB_DATABASE
+        value: /opt/render/project/src/database/database.sqlite
+      - key: APP_KEY
+        sync: false # Render te pedirá este valor en pantalla al crear el servicio

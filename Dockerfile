@@ -12,8 +12,10 @@ RUN apt-get update && apt-get install -y \
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf
-RUN a2enmod rewrite
 
+RUN sed -ri -e 's!AllowOverride None!AllowOverride All!g' /etc/apache2/apache2.conf
+
+RUN a2enmod rewrite
 # 3. Instalar Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -30,10 +32,10 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 # 7. Crear script de arranque para la Base de Datos y el Server
 RUN echo "#!/bin/bash\n\
-touch database/database.sqlite\n\
-chown www-data:www-data database/database.sqlite\n\
-php artisan migrate:fresh --seed --force\n\
-apache2-foreground" > /start.sh && chmod +x /start.sh
+    touch database/database.sqlite\n\
+    chown www-data:www-data database/database.sqlite\n\
+    php artisan migrate:fresh --seed --force\n\
+    apache2-foreground" > /start.sh && chmod +x /start.sh
 
 # 8. Ejecutar
 CMD ["/start.sh"]

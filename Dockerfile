@@ -33,7 +33,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # 7. Crear script de arranque para la Base de Datos y el Server
 RUN echo "#!/bin/bash\n\
     touch database/database.sqlite\n\
-    chown www-data:www-data database/database.sqlite\n\
+    chown -R www-data:www-data /var/www/html/database\n\
     php artisan migrate:fresh --seed --force\n\
     apache2-foreground" > /start.sh && chmod +x /start.sh
 
